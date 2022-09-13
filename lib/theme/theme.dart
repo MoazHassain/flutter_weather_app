@@ -7,11 +7,8 @@ const Color clrWhite100 = Color(0xffF4F4F4);
 const Color clrPrimary = Color(0xffF58A5B);
 
 const FontWeight fontMedium = FontWeight.w500;
-myfont(
-  double? size, [
-  Color? clr,
-  FontWeight? fw,
-]) {
+
+myfont(double? size, [Color? clr, FontWeight? fw]) {
   return TextStyle(
     fontSize: size,
     color: clr == null ? clrBlack000 : clr,
