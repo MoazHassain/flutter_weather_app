@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather_app/theme/theme.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +17,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Position? position;
+
+  Map<String, dynamic>? weatherMap;
+  Map<String, dynamic>? forecastMap;
 
   _determinePosition() async {
     bool serviceEnabled;
@@ -51,6 +57,26 @@ class _HomePageState extends State<HomePage> {
     // continue accessing the position of the device.
     position = await Geolocator.getCurrentPosition();
     print("position is ${position!.latitude} ${position!.longitude}");
+    fetchWeatherData();
+  }
+
+  fetchWeatherData() async {
+    String weatherApi =
+        "https://api.openweathermap.org/data/2.5/weather?lat=${position!.latitude}&lon=${position!.longitude}&appid=f79464db0b72d0fcdf098da8dd8dc27a";
+
+    String forecastApi =
+        "https://api.openweathermap.org/data/2.5/forecast?lat=${position!.latitude}&lon=${position!.longitude}&appid=f79464db0b72d0fcdf098da8dd8dc27a";
+
+    var weatherDataResponse = await http.get(Uri.parse(weatherApi));
+    var forecastDataResponse = await http.get(Uri.parse(forecastApi));
+    print(weatherDataResponse.body);
+
+    setState(() {
+      weatherMap =
+          Map<String, dynamic>.from(jsonDecode(weatherDataResponse.body));
+      forecastMap =
+          Map<String, dynamic>.from(jsonDecode(forecastDataResponse.body));
+    });
   }
 
   @override
