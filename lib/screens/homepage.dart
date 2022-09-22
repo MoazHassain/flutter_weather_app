@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:weather_app/theme/theme.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +13,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Position? position;
+
+  _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    position = await Geolocator.getCurrentPosition();
+    print("position is ${position!.latitude} ${position!.longitude}");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _determinePosition();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -285,47 +333,9 @@ class _HomePageState extends State<HomePage> {
                                 "Visibility",
                                 style: myfont(14),
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "12 m/h",
-                                style: myfont(
-                                  14,
-                                  clrBlack100,
-                                ),
-                              ),
                               SizedBox(
                                 height: 8,
                               ),
-                              Text(
-                                "25 m/h",
-                                style: myfont(
-                                  14,
-                                  clrBlack100,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
                               Text(
                                 "Humidity",
                                 style: myfont(14),
@@ -344,7 +354,7 @@ class _HomePageState extends State<HomePage> {
                           width: 4,
                         ),
                         Expanded(
-                          flex: 2,
+                          flex: 5,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,8 +376,31 @@ class _HomePageState extends State<HomePage> {
                                   clrBlack100,
                                 ),
                               ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                "55%",
+                                style: myfont(
+                                  14,
+                                  clrBlack100,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                "1",
+                                style: myfont(
+                                  14,
+                                  clrBlack100,
+                                ),
+                              ),
                             ],
                           ),
+                        ),
+                        SizedBox(
+                          width: 12,
                         ),
                       ],
                     )
