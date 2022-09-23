@@ -82,11 +82,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  tempCelsius() {
-    double tempFahrenheit = weatherMap!["main"]["temp"];
+  tempCelsius(value) {
+    double tempFahrenheit = value;
     double tempCelsius = (tempFahrenheit - 32) * 0.5556;
     String temp = tempCelsius.toStringAsFixed(2);
     return temp;
+  }
+
+  CoOrdinates(CoOrd) {
+    double coord = CoOrd;
+    String coordString = coord.toStringAsFixed(2);
+    return coordString;
+  }
+
+  // weather icon according to weather data
+  weatherImage(weatherStatus) {
+    String weatherImg =
+        "${weatherStatus == "haze" ? "/icons/haze-fill.svg" : weatherStatus == "light rain" ? "/icons/ion_rainy.svg" : weatherStatus == "clear sky" ? "/icons/fa_sun-o.svg" : "/icons/fa_sun-o.svg"}";
+
+    return weatherImg;
   }
 
   @override
@@ -149,8 +163,8 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         children: [
                           SvgPicture.asset(
-                            "/icons/fa_sun-o.svg",
-                            color: clrPrimary,
+                            "${weatherImage(weatherMap!["weather"][0]["description"])}",
+                            // color: clrPrimary,
                             cacheColorFilter: false,
                             height: 46,
                             width: 46,
@@ -159,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                             height: 8,
                           ),
                           Text(
-                            "${tempCelsius()}°",
+                            "${tempCelsius(weatherMap!["main"]["temp"])}°c",
                             style: myfont(
                               36,
                               clrBlack000,
@@ -190,161 +204,224 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    Padding(
+
+                    Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: 26,
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 20,
-                              ),
-                              width: double.infinity,
-                              // height: 120,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: clrPrimary,
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "18:00",
-                                    style: myfont(
-                                      13,
-                                      clrWhite000,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  SvgPicture.asset(
-                                    "/icons/fa_sun-o.svg",
-                                    color: clrWhite000,
-                                    cacheColorFilter: false,
-                                    height: 30,
-                                    width: 30,
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Text(
-                                    "12°",
-                                    style: myfont(
-                                      16,
-                                      clrWhite000,
-                                      FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                      height: 150,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 20,
                             ),
-                          ),
-                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3 - 12,
+                            // height: 120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: index == 0
+                                  ? clrPrimary
+                                  : index == 1
+                                      ? Color(0xffB46490)
+                                      : Color(0xff49577A),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "${Jiffy(forecastMap!["list"][index * 2]["dt_txt"]).format("h:mm a")}",
+                                  style: myfont(
+                                    13,
+                                    clrWhite000,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                SvgPicture.asset(
+                                  "${weatherImage(forecastMap!["list"][index * 2]["weather"][0]["description"])}",
+                                  color: clrWhite000,
+                                  cacheColorFilter: false,
+                                  height: 30,
+                                  width: 30,
+                                ),
+                                SizedBox(
+                                  height: 16,
+                                ),
+                                Text(
+                                  "${tempCelsius(weatherMap!["main"]["temp"])}°c",
+                                  style: myfont(
+                                    16,
+                                    clrWhite000,
+                                    FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return SizedBox(
                             width: 8,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 20,
-                              ),
-                              width: double.infinity,
-                              // height: 120,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color(0xffB46490),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "18:00",
-                                    style: myfont(
-                                      13,
-                                      clrWhite000,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  SvgPicture.asset(
-                                    "/icons/ion_rainy-outline.svg",
-                                    color: clrWhite000,
-                                    cacheColorFilter: false,
-                                    height: 30,
-                                    width: 30,
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Text(
-                                    "12°",
-                                    style: myfont(
-                                      16,
-                                      clrWhite000,
-                                      FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 20,
-                              ),
-                              width: double.infinity,
-                              // height: 120,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Color(0xff49577A),
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "18:00",
-                                    style: myfont(
-                                      13,
-                                      clrWhite000,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  SvgPicture.asset(
-                                    "/icons/moon-line.svg",
-                                    color: clrWhite000,
-                                    cacheColorFilter: false,
-                                    height: 30,
-                                    width: 30,
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Text(
-                                    "12°",
-                                    style: myfont(
-                                      16,
-                                      clrWhite000,
-                                      FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
+
+                      // child: Row(
+                      //   children: [
+                      //     Expanded(
+                      //       flex: 1,
+                      //       child: Container(
+                      //         padding: EdgeInsets.symmetric(
+                      //           horizontal: 12,
+                      //           vertical: 20,
+                      //         ),
+                      //         width: double.infinity,
+                      //         // height: 120,
+                      //         decoration: BoxDecoration(
+                      //           borderRadius: BorderRadius.circular(12),
+                      //           color: clrPrimary,
+                      //         ),
+                      //         child: Column(
+                      //           children: [
+                      //             Text(
+                      //               "18:00",
+                      //               style: myfont(
+                      //                 13,
+                      //                 clrWhite000,
+                      //               ),
+                      //             ),
+                      //             SizedBox(
+                      //               height: 20,
+                      //             ),
+                      //             SvgPicture.asset(
+                      //               "/icons/fa_sun-o.svg",
+                      //               color: clrWhite000,
+                      //               cacheColorFilter: false,
+                      //               height: 30,
+                      //               width: 30,
+                      //             ),
+                      //             SizedBox(
+                      //               height: 16,
+                      //             ),
+                      //             Text(
+                      //               "12°",
+                      //               style: myfont(
+                      //                 16,
+                      //                 clrWhite000,
+                      //                 FontWeight.w700,
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     SizedBox(
+                      //       width: 8,
+                      //     ),
+                      //     Expanded(
+                      //       flex: 1,
+                      //       child: Container(
+                      //         padding: EdgeInsets.symmetric(
+                      //           horizontal: 12,
+                      //           vertical: 20,
+                      //         ),
+                      //         width: double.infinity,
+                      //         // height: 120,
+                      //         decoration: BoxDecoration(
+                      //           borderRadius: BorderRadius.circular(12),
+                      //           color: Color(0xffB46490),
+                      //         ),
+                      //         child: Column(
+                      //           children: [
+                      //             Text(
+                      //               "18:00",
+                      //               style: myfont(
+                      //                 13,
+                      //                 clrWhite000,
+                      //               ),
+                      //             ),
+                      //             SizedBox(
+                      //               height: 20,
+                      //             ),
+                      //             SvgPicture.asset(
+                      //               "/icons/ion_rainy-outline.svg",
+                      //               color: clrWhite000,
+                      //               cacheColorFilter: false,
+                      //               height: 30,
+                      //               width: 30,
+                      //             ),
+                      //             SizedBox(
+                      //               height: 16,
+                      //             ),
+                      //             Text(
+                      //               "12°",
+                      //               style: myfont(
+                      //                 16,
+                      //                 clrWhite000,
+                      //                 FontWeight.w700,
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     SizedBox(
+                      //       width: 8,
+                      //     ),
+                      //     Expanded(
+                      //       flex: 1,
+                      //       child: Container(
+                      //         padding: EdgeInsets.symmetric(
+                      //           horizontal: 12,
+                      //           vertical: 20,
+                      //         ),
+                      //         width: double.infinity,
+                      //         // height: 120,
+                      //         decoration: BoxDecoration(
+                      //           borderRadius: BorderRadius.circular(12),
+                      //           color: Color(0xff49577A),
+                      //         ),
+                      //         child: Column(
+                      //           children: [
+                      //             Text(
+                      //               "18:00",
+                      //               style: myfont(
+                      //                 13,
+                      //                 clrWhite000,
+                      //               ),
+                      //             ),
+                      //             SizedBox(
+                      //               height: 20,
+                      //             ),
+                      //             SvgPicture.asset(
+                      //               "/icons/moon-line.svg",
+                      //               color: clrWhite000,
+                      //               cacheColorFilter: false,
+                      //               height: 30,
+                      //               width: 30,
+                      //             ),
+                      //             SizedBox(
+                      //               height: 16,
+                      //             ),
+                      //             Text(
+                      //               "12°",
+                      //               style: myfont(
+                      //                 16,
+                      //                 clrWhite000,
+                      //                 FontWeight.w700,
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                     ),
 
                     Padding(
@@ -391,7 +468,7 @@ class _HomePageState extends State<HomePage> {
                                       height: 8,
                                     ),
                                     Text(
-                                      "UV",
+                                      "Sea Level",
                                       style: myfont(14),
                                     ),
                                   ],
@@ -401,7 +478,7 @@ class _HomePageState extends State<HomePage> {
                                 width: 4,
                               ),
                               Expanded(
-                                flex: 5,
+                                flex: 2,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,7 +514,7 @@ class _HomePageState extends State<HomePage> {
                                       height: 8,
                                     ),
                                     Text(
-                                      "1",
+                                      "${weatherMap!["main"]["sea_level"]}",
                                       style: myfont(
                                         14,
                                         clrBlack100,
@@ -448,6 +525,88 @@ class _HomePageState extends State<HomePage> {
                               ),
                               SizedBox(
                                 width: 12,
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Clouds",
+                                      style: myfont(14),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "Pressure",
+                                      style: myfont(14),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "lat",
+                                      style: myfont(14),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "lon",
+                                      style: myfont(14),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${weatherMap!["clouds"]["all"]}",
+                                      style: myfont(
+                                        14,
+                                        clrBlack100,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "${weatherMap!["main"]["pressure"]}",
+                                      style: myfont(
+                                        14,
+                                        clrBlack100,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "${CoOrdinates(weatherMap!["coord"]["lat"])}",
+                                      style: myfont(
+                                        14,
+                                        clrBlack100,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text(
+                                      "${CoOrdinates(weatherMap!["coord"]["lon"])}",
+                                      style: myfont(
+                                        14,
+                                        clrBlack100,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           )
