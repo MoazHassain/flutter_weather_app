@@ -37,6 +37,7 @@ dependencies:
   flutter_svg:
   geolocator: ^9.0.1
   http: ^0.13.5
+  jiffy: ^5.0.0
 
 dev_dependencies:
   flutter_test:
